@@ -1,0 +1,26 @@
+import random
+import numpy as np
+import scipy.stats as si
+import sympy as sy
+#N-Number of time steps
+r=0.03
+S=100
+T=1
+mu=r
+K=100
+sigma=0.3
+d1 = (np.log(S / K) + (mu + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+d2 = (np.log(S / K) + (mu - 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+call = (S * si.norm.cdf(d1, 0.0, 1.0) - K * np.exp(-mu * T) * si.norm.cdf(d2, 0.0, 1.0))
+print("The value of the call option is:", call) 
+delta=si.norm.cdf(d1, 0.0, 1.0)
+print("The delta of the call option is:", delta)
+nd1=(1/np.sqrt(2*np.pi))*np.exp(-(d1**2)/2)
+gamma=(1/(S*sigma*np.sqrt(T)))*nd1
+print("The gamma of the call option is:", gamma)
+theta=-mu*K*np.exp(-mu*T)*si.norm.cdf(d2, 0.0, 1.0)-(sigma/(2*np.sqrt(T)))*S*nd
+print("The theta of the call option is:", theta)
+vega=np.sqrt(T)*S*nd1
+print("The vega of the call option is:", vega)
+rho=T*K*np.exp(-mu*T)*si.norm.cdf(d2, 0.0, 1.0)
+print("The rho of the call option is:", rho)
