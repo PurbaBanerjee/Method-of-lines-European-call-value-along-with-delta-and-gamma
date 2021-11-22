@@ -1,19 +1,19 @@
 import numpy as np
 import scipy.stats as si
-import sympy as sy
+
 import math
 from scipy.linalg import expm
 from numpy.linalg import inv
 from matplotlib import pyplot as plt
 %matplotlib inline
-cx=80.0
+cx=110
 d=1.2
-n=60
+n=100
 g=[]
 g1=[]
 g2=[]
 y=[]
-while n<1921:
+while n<2001:
     dx=1/n
     n1=n+1
     n2=n-1
@@ -28,6 +28,9 @@ while n<1921:
     x[n1]=1.1
     xx=np.zeros(n1+1)
     xx=(cx*x)/(d-x)
+    indexFor100 = max(np.where(xx <=100 )[0])
+    print(indexFor100, xx[indexFor100])
+    xx[indexFor100+1] = 100
     fl=xx[n1]
     for i in range(1,n1+1):
         h[i]=xx[i]-xx[i-1]
@@ -63,9 +66,10 @@ while n<1921:
     E0=np.dot(expm(T*AA),U)
     G1=np.dot(inv(AA),(expm(T*AA))-np.identity(n))
     E=E0+np.dot(G1,F)
-    m=int((2/3)*n-1)
+    m=indexFor100
+    print("Index for xx = 100", m, np.where(xx==100))
     print("The number of grid points is:",n)
-    print("The value at xx=100 is:", E[m])
+    print("The value at xx=100 is:",xx[m], E[m])
     abse=abs(E[m]-13.28330840)
     print("The absolute error is:",abse)
     error=np.log(abs(E[m]-13.28330840))
@@ -97,4 +101,3 @@ fig, ax = plt.subplots()
 ax.plot(y,g, label='European call')
 ax.plot(y,g1, label='European call delta error')
 ax.plot(y,g2, label='European call gamma error')
-
