@@ -1,0 +1,378 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[5]:
+
+
+import numpy as np
+import scipy.stats as si
+import time
+import math
+from scipy.linalg import expm
+from numpy.linalg import inv
+from matplotlib import pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+cx=110
+d=1.2
+n=100
+t=0.1
+g=[]
+y=[]
+t1=time.time()
+while n<3500:
+    dx=1/n
+    n1=n+1
+    n2=n-1
+    sigma=0.3
+    r=0.03
+    T=1
+    K=100
+
+    h=np.zeros(n1+2)
+    x=np.zeros(n1+1)
+    x[1:n1]=dx
+    x = np.cumsum(x)
+    x[n1]=1.1
+    xx=np.zeros(n1+1)
+    xx=(cx*x)/(d-x)
+    #xx = np.linspace(50, 300, num=n+2)
+  
+  
+    
+        
+    indexFor100 = max(np.where(xx <=100 )[0])
+    xx[indexFor100+1] = 100
+    if not (xx==100).any:
+        xx[indexFor100+1] = 100
+        
+  
+    fl=xx[n1]
+    for i in range(1,n1+1):
+        h[i]=xx[i]-xx[i-1]
+        
+  
+    A=np.zeros((n,n))
+    B=np.zeros((n,n))
+    C=np.zeros((n,n))
+    A1=np.zeros((n,n))
+    B1=np.zeros((n,n))
+    A2=np.zeros((n,n))
+    B2=np.zeros((n,n))
+    U0=np.zeros(n)
+    V2=np.zeros(n)
+    V1=np.zeros(n)
+    frhs=np.zeros(n)
+    frhs2=np.zeros(n)
+    frhs1=np.zeros(n)
+    xxSquare = xx*xx
+    hSquare =h[:n+1]*h[1:n+2]
+    hShift = h[:n+1]+h[1:n+2]
+    tempDia=(sigma*sigma*xxSquare[1:n+1])/hSquare[1:n+1]
+    
+    A = A-np.diag(tempDia) 
+    
+    np.fill_diagonal(C, -r)
+    tempDia = (sigma*sigma*xxSquare[1:n])/((hShift[1:n])*h[2:n+1])
+    tempDia2  = (r*xx[1:n])/(hShift[1:n])
+    A=A+np.diag(tempDia, k=1)
+    B = B +np.diag(tempDia2,k=1)
+    tempDia = (sigma*sigma*xxSquare[2:n+1])/((hShift[2:n+1])*h[2:n+1])
+    A=A+np.diag(tempDia, k=-1)
+    tempDia2 = -(r*xx[2:n+1])/(hShift[2:n+1])
+    B = B +np.diag(tempDia2,k=-1)
+    U0=(np.maximum(xx[1:n+1]-K,0))
+    fhs=((sigma*sigma*xx[n]*xx[n])/((h[n]+h[n+1])*h[n])) +((r*xx[n])/(h[n]+h[n+1]))
+    frhs[n-1]=fhs*(max(fl-K,0))
+    U=np.array([U0]).T
+    F=np.array([frhs]).T
+ 
+    AA=A+B+C
+    invAA = inv(AA)
+    idenN=np.identity(n)
+    
+    expMatrix = expm((T)*AA)
+    expMatrix1 = expMatrix
+    E0=np.dot(expMatrix,U)
+    G1=np.dot(invAA,expMatrix-idenN)
+    E=E0+np.dot(G1,F)
+    m=indexFor100
+    t2=time.time()
+    print("The time-elapsed is:",t2-t1)
+   
+    
+    print("Index for xx = 100", m, np.where(xx==100))
+    print("The number of grid points is:",n)
+    print("The value at timee 0 for xx=100 is :",xx[m+1],E[m])
+    abse=abs(E[m]-13.283308397880909)
+    print("The absolute error is:",abse)
+    error=np.log(abs(E[m]-13.283308397880909))
+    print("The error is:", error)
+   
+   
+    
+    print("The value of n is",n)
+    g.append(abse)
+    y.append(n)
+    n=2*n
+
+fig, ax = plt.subplots()
+ax.plot(y,g, label='European call')
+
+import numpy as np
+import scipy.stats as si
+import time
+import math
+from scipy.linalg import expm
+from numpy.linalg import inv
+from matplotlib import pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+cx=110
+d=1.2
+n=100
+t=0.1
+gxx=[]
+y=[]
+t1=time.time()
+while n<3500:
+    dx=1/n
+    n1=n+1
+    n2=n-1
+    sigma=0.3
+    r=0.03
+    T=1
+    K=100
+
+    h=np.zeros(n1+2)
+   
+    
+    xx = np.linspace(30, 350, num=n+2)
+  
+  
+    
+    
+  
+    
+    indexFor100 = max(np.where(xx <=100 )[0])
+    xx[indexFor100+1] = 100
+    if not (xx==100).any:
+        xx[indexFor100+1] = 100
+        
+  
+    fl=xx[n1]
+    for i in range(1,n1+1):
+        h[i]=xx[i]-xx[i-1]
+        
+  
+    A=np.zeros((n,n))
+    B=np.zeros((n,n))
+    C=np.zeros((n,n))
+    A1=np.zeros((n,n))
+    B1=np.zeros((n,n))
+    A2=np.zeros((n,n))
+    B2=np.zeros((n,n))
+    U0=np.zeros(n)
+    V2=np.zeros(n)
+    V1=np.zeros(n)
+    frhs=np.zeros(n)
+    frhs2=np.zeros(n)
+    frhs1=np.zeros(n)
+    xxSquare = xx*xx
+    hSquare =h[:n+1]*h[1:n+2]
+    hShift = h[:n+1]+h[1:n+2]
+    tempDia=(sigma*sigma*xxSquare[1:n+1])/hSquare[1:n+1]
+    
+    A = A-np.diag(tempDia) 
+    
+    np.fill_diagonal(C, -r)
+    tempDia = (sigma*sigma*xxSquare[1:n])/((hShift[1:n])*h[2:n+1])
+    tempDia2  = (r*xx[1:n])/(hShift[1:n])
+    A=A+np.diag(tempDia, k=1)
+    B = B +np.diag(tempDia2,k=1)
+    tempDia = (sigma*sigma*xxSquare[2:n+1])/((hShift[2:n+1])*h[2:n+1])
+    A=A+np.diag(tempDia, k=-1)
+    tempDia2 = -(r*xx[2:n+1])/(hShift[2:n+1])
+    B = B +np.diag(tempDia2,k=-1)
+    U0=(np.maximum(xx[1:n+1]-K,0))
+    fhs=((sigma*sigma*xx[n]*xx[n])/((h[n]+h[n+1])*h[n])) +((r*xx[n])/(h[n]+h[n+1]))
+    frhs[n-1]=fhs*(max(fl-K,0))
+    U=np.array([U0]).T
+    F=np.array([frhs]).T
+ 
+    AA=A+B+C
+    invAA = inv(AA)
+    idenN=np.identity(n)
+    
+    expMatrix = expm((T)*AA)
+    expMatrix1 = expMatrix
+    E0=np.dot(expMatrix,U)
+    G1=np.dot(invAA,expMatrix-idenN)
+    E=E0+np.dot(G1,F)
+    m=indexFor100
+    t2=time.time()
+    print("The time-elapsed is:",t2-t1)
+    expMatrix = expm((T)*AA)
+    expMatrix1 = expMatrix
+    E0=np.dot(expMatrix,U)
+    G1=np.dot(invAA,expMatrix-idenN)
+    E=E0+np.dot(G1,F)
+    m=indexFor100
+    t2=time.time()
+    print("The time-elapsed is:",t2-t1)
+   
+    
+    print("Index for xx = 100", m, np.where(xx==100))
+    print("The number of grid points is:",n)
+    print("The value at timee 0 for xx=100 is :",xx[m+1],E[m])
+    abse=abs(E[m]-13.283308397880909)
+    print("The absolute error is:",abse)
+    error=np.log(abs(E[m]-13.283308397880909))
+    print("The error is:", error)
+   
+   
+    
+    print("The value of n is",n)
+    gxx.append(abse)
+    y.append(n)
+    n=2*n
+
+fig, ax = plt.subplots()
+ax.plot(y,g, label='European call')
+
+import numpy as np
+import scipy.stats as si
+import time
+import math
+from scipy.linalg import expm
+from numpy.linalg import inv
+from matplotlib import pyplot as plt
+get_ipython().run_line_magic('matplotlib', 'inline')
+cx=110
+d=1.2
+n=100
+t=0.1
+gx=[]
+y=[]
+t1=time.time()
+while n<3500:
+    dx=1/n
+    n1=n+1
+    n2=n-1
+    sigma=0.3
+    r=0.03
+    T=1
+    K=100
+
+    h=np.zeros(n1+2)
+   
+    
+    xx = K*np.exp(np.linspace(-1.5, 1.5, num=n+2))
+  
+    
+    
+  
+    
+    indexFor100 = max(np.where(xx <=100 )[0])
+    xx[indexFor100+1] = 100
+    if not (xx==100).any:
+        xx[indexFor100+1] = 100
+        
+  
+    fl=xx[n1]
+    for i in range(1,n1+1):
+        h[i]=xx[i]-xx[i-1]
+        
+  
+    A=np.zeros((n,n))
+    B=np.zeros((n,n))
+    C=np.zeros((n,n))
+    A1=np.zeros((n,n))
+    B1=np.zeros((n,n))
+    A2=np.zeros((n,n))
+    B2=np.zeros((n,n))
+    U0=np.zeros(n)
+    V2=np.zeros(n)
+    V1=np.zeros(n)
+    frhs=np.zeros(n)
+    frhs2=np.zeros(n)
+    frhs1=np.zeros(n)
+    xxSquare = xx*xx
+    hSquare =h[:n+1]*h[1:n+2]
+    hShift = h[:n+1]+h[1:n+2]
+    tempDia=(sigma*sigma*xxSquare[1:n+1])/hSquare[1:n+1]
+    
+    A = A-np.diag(tempDia) 
+    
+    np.fill_diagonal(C, -r)
+    tempDia = (sigma*sigma*xxSquare[1:n])/((hShift[1:n])*h[2:n+1])
+    tempDia2  = (r*xx[1:n])/(hShift[1:n])
+    A=A+np.diag(tempDia, k=1)
+    B = B +np.diag(tempDia2,k=1)
+    tempDia = (sigma*sigma*xxSquare[2:n+1])/((hShift[2:n+1])*h[2:n+1])
+    A=A+np.diag(tempDia, k=-1)
+    tempDia2 = -(r*xx[2:n+1])/(hShift[2:n+1])
+    B = B +np.diag(tempDia2,k=-1)
+    U0=(np.maximum(xx[1:n+1]-K,0))
+    fhs=((sigma*sigma*xx[n]*xx[n])/((h[n]+h[n+1])*h[n])) +((r*xx[n])/(h[n]+h[n+1]))
+    frhs[n-1]=fhs*(max(fl-K,0))
+    U=np.array([U0]).T
+    F=np.array([frhs]).T
+ 
+    AA=A+B+C
+    invAA = inv(AA)
+    idenN=np.identity(n)
+    
+    expMatrix = expm((T)*AA)
+    expMatrix1 = expMatrix
+    E0=np.dot(expMatrix,U)
+    G1=np.dot(invAA,expMatrix-idenN)
+    E=E0+np.dot(G1,F)
+    m=indexFor100
+    t2=time.time()
+    print("The time-elapsed is:",t2-t1)
+    expMatrix = expm((T)*AA)
+    expMatrix1 = expMatrix
+    E0=np.dot(expMatrix,U)
+    G1=np.dot(invAA,expMatrix-idenN)
+    E=E0+np.dot(G1,F)
+    m=indexFor100
+    t2=time.time()
+    print("The time-elapsed is:",t2-t1)
+   
+    
+    print("Index for xx = 100", m, np.where(xx==100))
+    print("The number of grid points is:",n)
+    print("The value at timee 0 for xx=100 is :",xx[m+1],E[m])
+    abse=abs(E[m]-13.283308397880909)
+    print("The absolute error is:",abse)
+    error=np.log(abs(E[m]-13.283308397880909))
+    print("The error is:", error)
+   
+   
+    
+   
+    
+    print("The value of n is",n)
+    gx.append(abse)
+    y.append(n)
+    n=2*n
+
+fig, ax = plt.subplots()
+ax.plot(y,g, label='European call')
+
+import matplotlib as mpl
+fig, ax = plt.subplots()
+ax.plot(y,(g), '-*',label='Non-Uniform Grid 1')
+ax.plot(y,(gx), '-+',label='Non-Uniform Grid 2')
+ax.plot(y,(gxx), '-o',label='Uniform Grid 1')
+
+ax.set_yscale('log')
+ax.set_xscale('log')
+
+plt.xlabel('Number of Grid Points')
+    
+plt.ylabel('Absolute error')
+mpl.rcParams.update({'font.size': 14})
+ax.grid(b=True, which='major', color='k', linestyle='-')
+
+ax.grid(b=True, which='minor', color='k', linestyle='--')
+plt.legend()
